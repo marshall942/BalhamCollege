@@ -17,22 +17,21 @@
 
                     i = 0;
                     while (i < data.length) {
-                        Lecturer = data[i]; //goes through all the records as a loop
-                        getAssignmentInfo(Lecturer.LecturerID); //checks if lecturer is assigned
-                        console.log(Lecturer.LecturerID);
+                        Course = data[i]; //goes through all the records as a loop
+                        getAssignmentInfo(Course.CourseID); //checks if course has a lecturer
                         if (assigned === false){ //moves on if lecturer is not assigned
-                            $("#lecturer_select_input").append("<option value='"+Lecturer.LecturerID+ "'>"+Lecturer.LecturerID+" "+Lecturer.LastName+" "+Lecturer.FirstName+"</option>");
+                            $("#course_select_input").append("<option value='"+Course.CourseID+ "'>"+Course.CourseID+" "+Course.CourseName+"</option>");
                         }
 
                         i = i + 1; //ends the loop
                     }
 
-                    $("#lecturer_select_input").change(function(){ //activates the display lecturer details when selected
-                        Lecturer = displayLecturerDetails($("#lecturer_select_input").val());
+                    $("#course_select_input").change(function(){ //activates the display course details when selected
+                        Course = displayCourseDetails($("#course_select_input").val());
                     });
 
-                    $("#delete_lecturer_but").click(function(){ //deletes the selected lecturer
-                        deleteLecturerInfo($("#lecturer_select_input").val());
+                    $("#delete_course_but").click(function(){ //deletes the selected course
+                        deleteCourseInfo($("#course_select_input").val());
                     });
                 },
                 error: function (err) {
@@ -40,8 +39,8 @@
                 }
             });
 
-            function getAssignmentInfo(LecturerID){
-                assigned = false; //a flag - says that each lecturer is not assigned
+            function getAssignmentInfo(CourseID){
+                assigned = false; //a flag - says that each course doesn't have a lecturer assigned
                 $.ajax({
                     type: 'Get',
                     dataType: 'JSON',
@@ -51,7 +50,7 @@
                         j = 0;
                         while (j < data.length){
                             assignment = data[j];
-                            if (assignment.Lecturer === LecturerID ){
+                            if (assignment.Course === CourseID ){
                                 assigned = true; //flags each lecturer that is assigned
                                 break
                             }
@@ -63,16 +62,41 @@
                     }
                 });}
 
-            function displayLecturerDetails(Lecturer){
+            function getAssessmentInfo(CourseID){
+                assessments = false; //a flag - says that each course doesn't have assessments
                 $.ajax({
                     type: 'Get',
                     dataType: 'JSON',
-                    url: 'https://balham-college-db.herokuapp.com/api/Lecturer/'+Lecturer+'/', //access the specific student record
+                    async: false,
+                    url: 'https://balham-college-db.herokuapp.com/api/Assessment/', //access assessment database
+                    success: function (data) {
+                        j = 0;
+                        while (j < data.length){
+                            assessment = data[j];
+                            if (assessment.Course === CourseID ){
+                                assessments = true; //flags each assessment for the course
+                                break
+                            }
+                            j = j + 1;
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });}
+
+
+
+            function displayCourseDetails(Course){
+                $.ajax({
+                    type: 'Get',
+                    dataType: 'JSON',
+                    url: 'https://balham-college-db.herokuapp.com/api/Course/'+Course+'/', //access the specific course record
                     success: function (data) {
 
-                        $("#lecturer_id_input").val(data.LecturerID);
-                        $("#last_name_input").val(data.LastName);
-                        $("#first_name_input").val(data.FirstName); //changes the input fields
+                        $("#course_id_input").val(data.CourseID);
+                        $("#course_name_input").val(data.CourseName);
+                        $("#status_input").val(data.Status); //changes the input fields
 
                     },
                     error: function (err) {
@@ -81,22 +105,22 @@
                 });
             }
 
-            function deleteLecturerInfo (LecturerID) {
-                lecturerid1 = $("#lecturer_id_input").val();
-                lastname1 = $("#last_name_input").val();
-                firstname1 = $("#first_name_input").val(); //defines the data
+            function deleteCourseInfo (LecturerID) {
+                courseid1 = $("#course_id_input").val();
+                coursename1 = $("#course_name_input").val();
+                status1 = $("#status_input").val(); //defines the data
 
                 $.ajax({
                     type: 'Delete',
                     dataType: 'JSON',
-                    url: 'https://balham-college-db.herokuapp.com/api/Lecturer/'+LecturerID+'/', //access the specific lecturer record
+                    url: 'https://balham-college-db.herokuapp.com/api/Course/'+CourseID+'/', //access the specific course record
                     data: {
-                        LecturerID: lecturerid1,
-                        LastName: lastname1,
-                        FirstName: firstname1,
+                        CourseID: courseid1,
+                        CourseName: coursename1,
+                        Status: status1,
                     },
                     success: function (data) {
-                        alert("Lecturer deleted successfully")
+                        alert("Course deleted successfully")
                         location.reload();
                     },
                     error: function (err) {
@@ -110,41 +134,39 @@
 
 </head>
 <body>
-<h1>Delete Lecturer</h1>
+<h1>Delete Course</h1>
 <form onsubmit="return false">
 
     <p>
     <div class="row">
-        <div class="column"><label> Select lecturer </label></div>
-        <div class="column"><select id="lecturer_select_input">
+        <div class="column"><label> Select course </label></div>
+        <div class="column"><select id="course_select_input">
             <option value = "">Select one</option></select></div>
     </div>
     </p>
 
     <p>
     <div class="row">
-        <div class="column"><label>Lecturer ID </label></div>
-        <div class="column"><input id="lecturer_id_input" type="text" size="10" disabled></div>
+        <div class="column"><label>Course ID </label></div>
+        <div class="column"><input id="course_id_input" type="text" size="10" disabled></div>
     </div>
     </p>
 
     <p>
         <div class="row">
-            <div class="column"><label>Last Name </label></div>
-            <div class="column"><input id="last_name_input" type="text" size="30" disabled></div>
-    <p id = "last_name_input_err"></p>
+            <div class="column"><label>Course Name </label></div>
+            <div class="column"><input id="course_name_input" type="text" size="30" disabled></div>
     </div>
     </p>
 
     <p>
         <div class="row">
-            <div class="column"><label> First Name </label></div>
-            <div class="column"><input id="first_name_input" type="text" size="30" disabled></div>
-    <p id = "first_name_input_err"></p>
+            <div class="column"><label> Status </label></div>
+            <div class="column"><input id="status_input" type="text" size="30" disabled></div>
     </div>
     </p>
 
-    <button type="button" id="delete_lecturer_but">Delete Lecturer</button>
+    <button type="button" id="delete_course_but">Delete Course</button>
     <button onclick="window.location.href='MainMenu.html';">Main Menu</button>
 
 </form>
