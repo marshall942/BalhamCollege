@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Withdraw Student v2</title>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+            integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="js/script.js"></script>
+    <script src="https://xxbridgeyxx.github.io/BALHAMCOLLEGE/js/script.js"></script>
+
+    <script>
+
+
+        $(document).ready(function () {
+
+
+            students = getAllStudents();
+            var i = 0;
+            while (i < students.length){
+                student = students[i];
+                $("#student_select_input").append("<option value='"+student.StudentID+"'>"+student.FirstName+" "+student.LastName+"</option>");
+                i++;
+            }
+
+            $("#student_select_input").change(function () {
+                $("#enrolment_select_input").empty();
+                $("#enrolment_select_input").append("<option>Select one</option>");
+                student = getStudent($("#student_select_input").val());
+                $("#student_id_input").val(student.StudentID);
+                $("#first_name_input").val(student.FirstName);
+                $("#last_name_input").val(student.LastName);
+                //this is for enrolment
+                enrolments =getEnrollmentsByStudents(student.StudentID);
+                var i = 0;
+                while (i < enrolments.length){
+                    enrolment = enrolments[i];
+                    console.log(enrolment);
+                    $("#enrolment_select_input").append("<option value='"+enrolment.EnrolmentID+"'>"+enrolment.Course+"</option>");
+                    $("#enrolment_id_input").val(enrolment.EnrolmentID);
+                    $("#year_input").val(enrolment.Year);
+                    $("#semester_input").val(enrolment.Semester);
+                    i++;
+                }
+                //this is for course
+                $("#enrolment_select_input").change(function () {
+                    enrolment = getEnrolment($("#enrolment_select_input").val());
+                    courseID = enrolment.Course;
+                    course = getCourseInfo(courseID);
+                    $("#course_name_input").val(course.CourseName);
+                });
+            });
+
+            $("#withdraw_student_but").click(function () {
+                enrolmentIndex = $("#enrolment_select_input").val();
+                $.ajax({
+                    type: 'DELETE',
+                    dataType: 'JSON',
+                    url: 'https://balham-college-db.herokuapp.com/api/Enrolment/'+enrolmentIndex,
+                    success: function (data) {
+                        alert('Student withdrawn successfully');
+                        location.reload();
+                    },
+                    error: function (err) {
+                        console.log(err);
+                        errors = JSON.parse(err.responseText);
+                        console.log(errors);
+
+                    }
+                });
+            });
+
+        });
+    </script>
+
+</head>
+<body>
+<h1>Withdraw Student</h1>
+<form onsubmit="return false">
+    <p>
+    <div class="row">
+        <div class="column"><label> Select student </label></div>
+        <div class="column"><select id="student_select_input">
+            <option value = "">Select one</option></select></div>
+    </div>
+    </p>
+
+    <p>
+    <div class="row">
+        <div class="column"><label>Student ID </label></div>
+        <div class="column"><input id="student_id_input" type="text" size="10" disabled></div>
+    </div>
+    </p>
+
+    <p>
+        <div class="row">
+            <div class="column"><label>Last Name </label></div>
+            <div class="column"><input id="last_name_input" type="text" size="30" disabled></div>
+    <p id = "last_name_input_err"></p>
+    </div>
+    </p>
+
+    <p>
+        <div class="row">
+            <div class="column"><label> First Name </label></div>
+            <div class="column"><input id="first_name_input" type="text" size="30" disabled></div>
+    <p id = "first_name_input_err"></p>
+    </div>
+    </p>
+
+    <br>
+
+    <p>
+    <div class="row">
+        <div class="column"><label> Select Enrolment </label></div>
+        <div class="column"><select id="enrolment_select_input">
+            <option value = "">Select one</option></select></div>
+    </div>
+    </p>
+
+    <p>
+    <div class="row">
+        <div class="column"><label>Enrolment ID </label></div>
+        <div class="column"><input id="enrolment_id_input" type="text" size="10" disabled></div>
+    </div>
+    </p>
+
+    <p>
+        <div class="row">
+            <div class="column"><label>Year </label></div>
+            <div class="column"><input id="year_input" type="text" size="30" disabled></div>
+    <p id = "year_input_err"></p>
+    </div>
+    </p>
+
+    <p>
+        <div class="row">
+            <div class="column"><label>Semester </label></div>
+            <div class="column"><input id="semester_input" type="text" size="30" disabled></div>
+    <p id = "semester_input_err"></p>
+    </div>
+    </p>
+
+    <p>
+        <div class="row">
+            <div class="column"><label>Course Name </label></div>
+            <div class="column"><input id="course_name_input" type="text" size="30" disabled></div>
+    <p id = "course_name_input_err"></p>
+    </div>
+    </p>
+
+    <button type="button" id="withdraw_student_but">Withdraw Student</button>
+    <button onclick="window.location.href='MainMenu.html';">Main Menu</button>
+
+</form>
+</body>
+</html>
