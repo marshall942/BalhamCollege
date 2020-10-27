@@ -19,8 +19,9 @@
                     while (i < data.length) {
                         Assessment = data[i]; //goes through all the records as a loop
                         getResultInfo(Assessment.AssessmentID); //checks if assessment has results
+                        getCourseName(Assessment.Course);
                         if (hasresults === false){ //moves on if assessment has no results
-                            $("#assessment_select_input").append("<option value='"+Assessment.AssessmentID+ "'>"+Assessment.AssessmentID+" "+Assessment.AssessmentName+"</option>");
+                            $("#assessment_select_input").append("<option value='"+Assessment.AssessmentID+ "'>"+Assessment.AssessmentID+" "+Assessment.AssessmentName+" "+courseName+"</option>");
                             //if you put a function here it will force it to work and fill in the data fields before it's selected
                             //change it to something like ("#select_input").change
                         }
@@ -92,7 +93,22 @@
                     success: function (data) {
 
                         $("#course_name_input").val(data.CourseName); //changes the input fields
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            }
 
+            function getCourseName(Course){
+                courseName = '';
+                $.ajax({
+                    type: 'Get',
+                    dataType: 'JSON',
+                    async: false,
+                    url: 'https://balham-college-db.herokuapp.com/api/Course/'+Course+'/', //access the specific course record
+                    success: function (data) {
+                    courseName = data.CourseName;
                     },
                     error: function (err) {
                         console.log(err);
