@@ -20,7 +20,13 @@
                         Course = data[i]; //goes through all the records as a loop
                         getAssignmentInfo(Course.CourseID); //checks if course has a lecturer
                         if (assigned === false){ //moves on if lecturer is not assigned
-                            $("#course_select_input").append("<option value='"+Course.CourseID+ "'>"+Course.CourseID+" "+Course.CourseName+"</option>");
+                            getAssessmentInfo(Course.CourseID);
+                            if (assessments === false){
+                                getEnrolmentInfo(Course.CourseID);
+                                if (enrolments === false){
+                                    $("#course_select_input").append("<option value='"+Course.CourseID+ "'>"+Course.CourseID+" "+Course.CourseName+"</option>");
+                                }
+                            }
                         }
 
                         i = i + 1; //ends the loop
@@ -85,6 +91,29 @@
                     }
                 });}
 
+            function getEnrolmentInfo(CourseID){
+                enrolments = false; //a flag - says that each course doesn't have enrolments
+                $.ajax({
+                    type: 'Get',
+                    dataType: 'JSON',
+                    async: false,
+                    url: 'https://balham-college-db.herokuapp.com/api/Enrolment/', //access enrolment database
+                    success: function (data) {
+                        j = 0;
+                        while (j < data.length){
+                            enrolment = data[j];
+                            if (enrolment.Course === CourseID ){
+                                enrolments = true; //flags each enrolment for the course
+                                break
+                            }
+                            j = j + 1;
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });}
+
 
 
             function displayCourseDetails(Course){
@@ -105,7 +134,7 @@
                 });
             }
 
-            function deleteCourseInfo (LecturerID) {
+            function deleteCourseInfo (CourseID) {
                 courseid1 = $("#course_id_input").val();
                 coursename1 = $("#course_name_input").val();
                 status1 = $("#status_input").val(); //defines the data
