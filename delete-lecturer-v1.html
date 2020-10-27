@@ -66,7 +66,7 @@
                 $.ajax({
                     type: 'Get',
                     dataType: 'JSON',
-                    url: 'https://balham-college-db.herokuapp.com/api/Lecturer/'+Lecturer+'/', //access the specific student record
+                    url: 'https://balham-college-db.herokuapp.com/api/Lecturer/'+Lecturer+'/', //access the specific lecturer record
                     success: function (data) {
 
                         $("#lecturer_id_input").val(data.LecturerID);
