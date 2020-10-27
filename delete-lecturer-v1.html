@@ -19,7 +19,6 @@
                     while (i < data.length) {
                         Lecturer = data[i]; //goes through all the records as a loop
                         getAssignmentInfo(Lecturer.LecturerID); //checks if lecturer is assigned
-                        console.log(Lecturer.LecturerID);
                         if (assigned === false){ //moves on if lecturer is not assigned
                             $("#lecturer_select_input").append("<option value='"+Lecturer.LecturerID+ "'>"+Lecturer.LecturerID+" "+Lecturer.LastName+" "+Lecturer.FirstName+"</option>");
                         }
@@ -132,7 +131,6 @@
         <div class="row">
             <div class="column"><label>Last Name </label></div>
             <div class="column"><input id="last_name_input" type="text" size="30" disabled></div>
-    <p id = "last_name_input_err"></p>
     </div>
     </p>
 
@@ -140,7 +138,6 @@
         <div class="row">
             <div class="column"><label> First Name </label></div>
             <div class="column"><input id="first_name_input" type="text" size="30" disabled></div>
-    <p id = "first_name_input_err"></p>
     </div>
     </p>
 
