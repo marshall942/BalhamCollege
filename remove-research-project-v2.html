@@ -70,7 +70,6 @@
                     url: 'https://balham-college-db.herokuapp.com/api/ResearchProject/', //access research project database
                     success: function (data) {
                         i = 0;
-                        $("#research_project_select_input").html("");
 
                         while (i < data.length){
 
@@ -127,17 +126,16 @@
             }
 
             function removeResearchProject (ResearchProjectID) {
-                assessmentname1 = $("#assessment_name_input").val();
-                type1 = $("#type_input").val(); //defines the data
+                output1 = $("#output_input").val();
+                description1 = $("#description_input").val(); //defines the data
 
                 $.ajax({
                     type: 'Delete',
                     dataType: 'JSON',
                     url: 'https://balham-college-db.herokuapp.com/api/ResearchProject/'+ResearchProjectID+'/', //access the specific assessment record
                     data: {
-                        AssessmentID: assessmentid1,
-                        AssessmentName: assessmentname1,
-                        Type: type1,
+                        Output: output1,
+                        Description: description1,
                     },
                     success: function (data) {
                         alert("Research project removed successfully")
