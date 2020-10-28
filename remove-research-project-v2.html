@@ -18,7 +18,7 @@
                     i = 0;
                     while (i < data.length) {
                         Lecturer = data[i]; //goes through all the records as a loop
-                        getResearchProjects(Lecturer.LecturerID); //checks if lecturer is assigned
+                        checkResearchProjects(Lecturer.LecturerID); //checks if lecturer is assigned
                         if (hasrps === true){ //moves on if lecturer is not assigned
                             $("#lecturer_select_input").append("<option value='"+Lecturer.LecturerID+ "'>"+Lecturer.LecturerID+" "+Lecturer.LastName+" "+Lecturer.FirstName+"</option>");
                         }
@@ -28,10 +28,11 @@
 
                     $("#lecturer_select_input").change(function(){ //activates the display lecturer details when selected
                         Lecturer = displayLecturerDetails($("#lecturer_select_input").val());
+                        Lecturer = getResearchProjects($("#lecturer_select_input").val());
                     });
 
                     $("#remove_research_project_but").click(function(){ //deletes the selected lecturer
-                        removeResearchProject($("#lecturer_select_input").val());
+                        removeResearchProject($("#research_project_select_input").val());
                     });
                 },
                 error: function (err) {
@@ -39,7 +40,7 @@
                 }
             });
 
-            function getResearchProjects(LecturerID){
+            function checkResearchProjects(LecturerID){
                 hasrps = false; //a flag - says that each lecturer has no research projects
                 $.ajax({
                     type: 'Get',
@@ -62,6 +63,34 @@
                     }
                 });}
 
+            function getResearchProjects(LecturerID) {
+                $.ajax({
+                    type: 'Get',
+                    dataType: 'JSON',
+                    url: 'https://balham-college-db.herokuapp.com/api/ResearchProject/', //access research project database
+                    success: function (data) {
+                        i = 0;
+                        $("#research_project_select_input").html("");
+
+                        while (i < data.length){
+
+                            researchprojects = data[i];
+                            if (researchprojects.Lecturer == LecturerID){
+
+                                $("#research_project_select_input").append("<option value='"+researchprojects.ResearchProjectID+"'>"+researchprojects.ResearchProjectID+" "+researchprojects.Description+"</option>");
+                                $("#research_project_select_input").change(function(){ //activates the display lecturer details when selected
+                                    ResearchProjectID = displayResearchProjectDetails($("#research_project_select_input").val());
+                                });
+                            }
+                            i = i + 1;
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            }
+
             function displayLecturerDetails(Lecturer){
                 $.ajax({
                     type: 'Get',
@@ -80,31 +109,16 @@
                 });
             }
 
-            function displayCourseName(Course){
+            function displayResearchProjectDetails(ResearchProjectID){
                 $.ajax({
                     type: 'Get',
                     dataType: 'JSON',
-                    async: false,
-                    url: 'https://balham-college-db.herokuapp.com/api/Course/'+Course+'/', //access the specific course record
+                    url: 'https://balham-college-db.herokuapp.com/api/ResearchProject/'+ResearchProjectID+'/', //access the specific lecturer record
                     success: function (data) {
 
-                        $("#course_name_input").val(data.CourseName); //changes the input fields
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                });
-            }
+                        $("#output_input").val(data.Output);
+                        $("#description_input").val(data.Description);
 
-            function getCourseName(Course){
-                courseName = '';
-                $.ajax({
-                    type: 'Get',
-                    dataType: 'JSON',
-                    async: false,
-                    url: 'https://balham-college-db.herokuapp.com/api/Course/'+Course+'/', //access the specific course record
-                    success: function (data) {
-                        courseName = data.CourseName;
                     },
                     error: function (err) {
                         console.log(err);
@@ -113,7 +127,6 @@
             }
 
             function removeResearchProject (ResearchProjectID) {
-                assessmentid1 = $("#assessment_id_input").val();
                 assessmentname1 = $("#assessment_name_input").val();
                 type1 = $("#type_input").val(); //defines the data
 
