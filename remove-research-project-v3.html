@@ -27,8 +27,8 @@
                     }
 
                     $("#lecturer_select_input").change(function(){ //activates the display lecturer details when selected
-                        Lecturer = displayLecturerDetails($("#lecturer_select_input").val());
-                        Lecturer = getResearchProjects($("#lecturer_select_input").val());
+                        displayLecturerDetails($("#lecturer_select_input").val());
+                        getResearchProjects($("#lecturer_select_input").val());
                     });
 
                     $("#remove_research_project_but").click(function(){ //deletes the selected lecturer
@@ -74,7 +74,7 @@
                         while (i < data.length){
 
                             researchprojects = data[i];
-                            $("#lecturer_select_input").change(function(){ //whem the lecturer changes
+                            $("#lecturer_select_input").change(function(){ //when the lecturer changes
                                 $("#research_project_select_input").empty(); //empties the previous options
                                 $("#research_project_select_input").append("<option value=''>Select one</option>"); //adds a "select one" option
                             })
@@ -82,7 +82,10 @@
 
                                 $("#research_project_select_input").append("<option value='"+researchprojects.ResearchProjectID+"'>"+researchprojects.ResearchProjectID+" "+researchprojects.Description+"</option>");
                                 $("#research_project_select_input").change(function(){ //activates the display lecturer details when selected
-                                    ResearchProjectID = displayResearchProjectDetails($("#research_project_select_input").val());
+                                    displayResearchProjectDetails($("#research_project_select_input").val());
+                                });
+                                $("#research_project_select_input").change(function(){ //activates the display lecturer details when selected
+                                    getRTDescription($("#research_project_select_input").val());
                                 });
                             }
                             i = i + 1;
@@ -122,6 +125,47 @@
                         $("#output_input").val(data.Output);
                         $("#description_input").val(data.Description);
 
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            }
+
+            function getRTDescription(ResearchProjectID){
+                $.ajax({
+                    type: 'Get',
+                    dataType: 'JSON',
+                    url: 'https://balham-college-db.herokuapp.com/api/ResearchProject/'+ResearchProjectID+'/', //access research project database
+                    success: function (data) {
+
+                        displayRTDescription(data.ResearchTopic);
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            }
+
+            function displayRTDescription(ResearchTopic){ //should not be research topic, replace it with something esle
+                $.ajax({
+                    type: 'Get',
+                    dataType: 'JSON',
+                    url: 'https://balham-college-db.herokuapp.com/api/ResearchTopic/', //access research project database
+                    success: function (data) {
+                        i = 0;
+
+                        while (i < data.length){
+
+                            researchtopic = data[i];
+
+                            if (researchtopic.ResearchTopicID == ResearchTopic){
+
+                                $("#rt_description_input").val(researchtopic.Description);
+
+                            }
+                            i = i + 1;
+                        }
                     },
                     error: function (err) {
                         console.log(err);
