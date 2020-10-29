@@ -28,8 +28,6 @@
 
                     $("#course_select_input").change(function(){ //activates the display lecturer details when selected
                         displayCourseDetails($("#course_select_input").val());
-                        getLecturerAssignments($("#course_select_input").val());
-                        assignmentBridge($("#course_select_input").val());
                     });
 
                     $("#remove_lecturer_but").click(function(){ //deletes the assignment record
@@ -81,82 +79,7 @@
                 });
             }
 
-            function assignmentBridge(CourseID) {
-                $.ajax({
-                    type: 'Get',
-                    dataType: 'JSON',
-                    url: 'https://balham-college-db.herokuapp.com/api/Course/'+CourseID+'/', //access research project database
-                    success: function (data) {
-
-                        displayRTDescription(data.ResearchTopic);
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                });
-            }
-
-            function getLecturerAssignments(CourseID) {
-                $.ajax({
-                    type: 'Get',
-                    dataType: 'JSON',
-                    url: 'https://balham-college-db.herokuapp.com/api/Assignment/', //access research project database
-                    success: function (data) {
-                        i = 0;
-
-                        while (i < data.length){
-
-                            assignment = data[i];
-                            $("#course_select_input").change(function(){ //when the lecturer changes
-                                $("#lecturer_select_input").empty(); //empties the previous options
-                                $("#lecturer_select_input").append("<option value=''>Select one</option>"); //adds a "select one" option
-                            })
-                            if (assignment.Course == CourseID){
-
-                                $("#lecturer_select_input").append("<option value='"+assignment.Course+"'>"+assignment.Course+" "+last_name+" "+first_name+"</option>");
-                                $("#lecturer_select_input").change(function(){ //activates the display lecturer details when selected
-                                    lecturerNames($("#research_project_select_input").val());
-                                });
-
-                            }
-                            i = i + 1;
-                        }
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                });
-            }
-
-            function lecturerNames() {
-                last_name = '';
-                first_name = '';
-                $.ajax({
-                    type: 'Get',
-                    dataType: 'JSON',
-                    async: false,
-                    url: 'https://balham-college-db.herokuapp.com/api/Lecturer/',
-                    success: function (data) {
-                        // location.reload();
-
-                        j = 0;
-                        while (j < data.length) {
-                            Course = data[j];
-                            if (Course.CourseID == Course) {
-                                course_name = Course.CourseName;
-                                break
-                            }
-                            j = j + 1;
-                        }
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                });
-                return course_name;
-            }
-
-            function removeLecturer (AssignmentID) { //button
+            function removeLecturer (AssignmentID) {
 
                 $.ajax({
                     type: 'Delete',
