@@ -83,8 +83,6 @@
                                 $("#research_project_select_input").append("<option value='"+researchprojects.ResearchProjectID+"'>"+researchprojects.ResearchProjectID+" "+researchprojects.Description+"</option>");
                                 $("#research_project_select_input").change(function(){ //activates the display research project details when selected
                                     displayResearchProjectDetails($("#research_project_select_input").val());
-                                });
-                                $("#research_project_select_input").change(function(){ //activates the get research topic description function when selected
                                     getRTDescription($("#research_project_select_input").val());
                                 });
                             }
