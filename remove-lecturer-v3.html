@@ -31,14 +31,13 @@
                         getLecturers($("#course_select_input").val());
                     });
 
-                    $("#remove_lecturer_but").click(function(){ //deletes the assignment record
-                        removeLecturer($("#research_project_select_input").val());
-                    });
+
                 },
                 error: function (err) {
                     console.log(err);
                 }
             });
+
 
             function checkAssignments(CourseID){
                 assigned = false; //a flag - says that each course has no lecturers
@@ -72,7 +71,6 @@
 
                         $("#course_id_input").val(data.CourseID);
                         $("#course_name_input").val(data.CourseName);
-                        getAssignmentID(data.CourseID);
 
                     },
                     error: function (err) {
@@ -93,7 +91,7 @@
                             assignment = data[x];
                             if (assignment.Course == CourseID ){
 
-                                displayLecturers(assignment.Lecturer)
+                                displayLecturers(assignment.Lecturer);
 
                             }
                             x = x + 1;
@@ -126,7 +124,6 @@
                                 $("#lecturer_select_input").append("<option value='"+Lecturers.LecturerID+"'>"+Lecturers.LecturerID+" "+Lecturers.LastName+" "+Lecturers.FirstName+"</option>");
                                 $("#lecturer_select_input").change(function(){ //activates the display research project details when selected
                                     displayLecturerDetails($("#lecturer_select_input").val());
-                                    getAssignmentID($("#lecturer_select_input").val());
                                 });
                             }
                             i = i + 1;
@@ -156,30 +153,6 @@
                 });
             }
 
-            function getAssignmentID(LecturerID, CourseID) {
-                $.ajax({
-                    type: 'Get',
-                    dataType: 'JSON',
-                    url: 'https://balham-college-db.herokuapp.com/api/Assignment/', //access research project database
-                    success: function (data) {
-                        i = 0;
-
-                        while (i < data.length){
-                            assignment = data[i];
-                            if (assignment.Lecturer == LecturerID){
-                                if (assignment.Course == CourseID){
-                                    removeLecturer(assignment.AssignmentID);
-                                }
-                            }
-                            i = i + 1;
-                        }
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                });
-            }
-
             function removeLecturer (AssignmentID) {
                 $.ajax({
                     type: 'Delete',
@@ -195,13 +168,69 @@
                     }
                 });
             }
+            $("#remove_lecturer_but").click(function(){ //deletes the assignment record
+                // removeLecturer($("#research_project_select_input").val());
+                console.log($("#lecturer_select_input").val());
+                console.log($("#course_select_input").val());
+                delAss = [];
+                $.ajax({
+                    type: 'Get',
+                    dataType: 'JSON',
+                    url: 'https://balham-college-db.herokuapp.com/api/Assignment/',
+                    success: function (data) {
+                        x = 0;
+                        while (x < data.length) {
+
+                            assignment = data[x];
+                            if (assignment.Lecturer == $("#lecturer_select_input").val()) {
+                                if (assignment.Course == $("#course_select_input").val()) {
+                                    $.ajax({
+                                        type: 'Delete',
+                                        dataType: 'JSON',
+                                        url: 'https://balham-college-db.herokuapp.com/api/Assignment/'+assignment.AssignmentID+'/', //access the specific assessment record
+
+                                        success: function (data) {
+                                            alert("Lecturer removed successfully")
+                                        },
+                                        error: function (err) {
+                                            console.log(err);
+                                        }
+                                    });
+                                    // location.reload();
+
+
+                                    delAss.push(assignment.AssignmentID)
+
+                                }
+                            }
+                            x = x + 1;
+
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+                console.log(delAss);
+
+                y=0;
+                console.log(delAss[0])
+
+                while (y < delAss.length+1){
+                    console.log(delAss[y]);
+                    y=y+1;
+                }
+
+
+
+            });
         });
 
     </script>
 
 </head>
 <body>
-<h1>Remove Lecturer v2</h1>
+<h1>Remove Lecturer v3</h1>
 <form onsubmit="return false">
 
     <p>
