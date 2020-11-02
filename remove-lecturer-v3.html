@@ -28,6 +28,7 @@
 
                     $("#course_select_input").change(function(){ //activates the display lecturer details when selected
                         displayCourseDetails($("#course_select_input").val());
+                        getAssignmentsByCourse($("#course_select_input").val());
                     });
 
                     $("#remove_lecturer_but").click(function(){ //deletes the assignment record
@@ -51,7 +52,6 @@
                         while (j < data.length){
                             assignment = data[j];
                             if (assignment.Course === CourseID ){
-                                bridge
                                 assigned = true; //flags each assessment that has results
                                 break
                             }
@@ -80,72 +80,32 @@
                 });
             }
 
-            function bridge(AssignmentID) {
+            function getAssignmentsByCourse(CourseID) {
+                assignments = [];
                 $.ajax({
                     type: 'Get',
                     dataType: 'JSON',
-                    url: 'https://balham-college-db.herokuapp.com/api/Assignment/'+AssignmentID+'/', //access the specific research project
+                    async:false,
+                    url: 'https://balham-college-db.herokuapp.com/api/Assignment/',
                     success: function (data) {
-
-                        getLecturers(data.Lecturer); //gives assignments foreign key to getLecturers function
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                });
-            }
-
-            function getLecturers(Lecturer) {
-                $.ajax({
-                    type: 'Get',
-                    dataType: 'JSON',
-                    url: 'https://balham-college-db.herokuapp.com/api/Lecturer/', //access research project database
-                    success: function (data) {
-                        i = 0;
-
-                        while (i < data.length){
-
-                            Lecturers = data[i];
-                            $("#course_select_input").change(function(){ //when the lecturer changes
-                                $("#lecturer_select_input").empty(); //empties the previous options
-                                $("#lecturer_select_input").append("<option value=''>Select one</option>"); //adds a "select one" option
-                            })
-                            if (Lecturers.LecturerID == Lecturer){ //where the research project has the same lecturer ID
-
-                                $("#lecturer_select_input").append("<option value='"+Lecturers.LecturerID+"'>"+Lecturers.LecturerID+" "+Lecturers.LastName+" "+Lecturers.FirstName+"</option>");
-                                $("#lecturer_select_input").change(function(){ //activates the display research project details when selected
-                                    displayLecturerDetails($("#lecturer_select_input").val());
-                                });
+                        assignmentsTemp = data;
+                        var i = 0;
+                        while (i<assignmentsTemp.length){
+                            assignment = assignmentsTemp[i];
+                            if (CourseID == assignment.Course){
+                                assignments.push(assignment);
                             }
-                            i = i + 1;
+                            i++;
                         }
                     },
                     error: function (err) {
                         console.log(err);
                     }
                 });
-            }
-
-            function displayLecturerDetails(Lecturer){ //displays the lecturer details in the box
-                $.ajax({
-                    type: 'Get',
-                    dataType: 'JSON',
-                    url: 'https://balham-college-db.herokuapp.com/api/Lecturer/'+Lecturer+'/', //access the specific lecturer record
-                    success: function (data) {
-
-                        $("#lecturer_id_input").val(data.LecturerID);
-                        $("#last_name_input").val(data.LastName);
-                        $("#first_name_input").val(data.FirstName); //changes the input fields
-
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                });
+                return assignments;
             }
 
             function removeLecturer (AssignmentID) {
-
                 $.ajax({
                     type: 'Delete',
                     dataType: 'JSON',
@@ -166,7 +126,7 @@
 
 </head>
 <body>
-<h1>Remove Lecturer v3</h1>
+<h1>Remove Lecturer v2</h1>
 <form onsubmit="return false">
 
     <p>

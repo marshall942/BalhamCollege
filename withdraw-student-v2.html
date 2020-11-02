@@ -36,6 +36,7 @@
                 while (i < enrolments.length){
                     enrolment = enrolments[i];
                     console.log(enrolment);
+                    $("#enrolment_select_input").empty();
                     $("#enrolment_select_input").append("<option value='"+enrolment.EnrolmentID+"'>"+enrolment.Course+"</option>");
                     $("#enrolment_id_input").val(enrolment.EnrolmentID);
                     $("#year_input").val(enrolment.Year);
