@@ -6,7 +6,7 @@ body{
 
 body {
 
-    background-image: url("images/BGHighSchool.png");
+    background-image: url("../images/BGHighSchool.png");
     background-size:     cover;
     background-repeat:   no-repeat;
     background-position: center center;
@@ -104,10 +104,6 @@ p{
     color: red;
 }
 
-.logo { /*styles the logo on the page*/
-    display: inline;
-    float: left;
-    height: 50px;
-    width: 50px;
-    margin-top: -10px;
+a{
+    color: white;
 }
