@@ -142,26 +142,78 @@
         });
 
     </script>
+    <link rel="stylesheet" href="css/style.css">
 
 </head>
 <body>
-<h1>Delete Assessment</h1>
 <form onsubmit="return false">
 
-    <p>
-    <div class="row">
-        <div class="column"><label> Select Assessment </label></div>
-        <div class="column"><select id="assessment_select_input">
-            <option value = "">Select one</option></select></div>
-    </div>
-    </p>
+<div id="container">
 
-    <p>
-    <div class="row">
-        <div class="column"><label>Assessment ID </label></div>
-        <div class="column"><input id="assessment_id_input" type="text" size="10" disabled></div>
+    <h1>Delete Assessment</h1>
+
+    <div id = "content">
+
+        <hr class = "subHR">
+        <h2>Assessment</h2>
+        <hr class = "subHR">
+
+        <div class="fields">
+            <p>
+                <select id="assessment_select_input">
+                    <option value = "">Select Assessment</option>
+                </select>
+            </p>
+
+            <p><input id="assessment_id_input" type="text" placeholder="Assessment ID" disabled></p>
+
+            <p><input id="course_name" type="text" maxlength="40" placeholder="Course Name*"></p>
+            <p id="course_name_input_err"></p>
+
+            <p><input id="course_credits" type="number" maxlength="3" placeholder="Credits*" max="120" min="5"></p>
+            <p id="course_credits_input_err"></p>
+
+            <p><input id="course_fee" type="number" maxlength="7" placeholder="Fee*"  max="8000.00" min="200.00"></p>
+            <p id="course_fee_input_err"></p>
+
+
+            <p><select id="course_status">
+                <option value="">Select Status*</option>
+                <option value="Current">Current</option>
+                <option value="Suspended">Suspended</option>
+            </select>
+            </p>
+            <p id="course_status_input_err"></p>
+
+
+        </div>
+
+        <hr class= "subHR">
+        <h2>Programme</h2>
+        <hr class= "subHR">
+
+        <div class="fields">
+            <p><select id = "programme_id_input">
+                <option value="">Select Programme*</option>
+            </select></p>
+            <p id="programme_input_err"></p>
+        </div>
     </div>
-    </p>
+    <hr>
+    <h3>Copyrighted ©Balham College</h3>
+    <hr>
+    <br>
+    <div id = buttonCase>
+
+        <button type="button" id="update_course_but" class="actionButton">Update Course</button>
+        <a href="MainMenu.html"><button type="button" id = "returnButton" >Return</button></a>
+
+    </div>
+    <br>
+
+
+
+</div>
 
     <p>
         <div class="row">
